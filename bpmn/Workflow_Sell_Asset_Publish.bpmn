@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1adnqr2" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.2.0">
+  <bpmn:process id="Process_1snpl18" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_0suvnw5</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0suvnw5" sourceRef="StartEvent_1" targetRef="Calculate_Quality_Indicator" />
+    <bpmn:serviceTask id="Calculate_Quality_Indicator" name="Calculate Quality Indicator">
+      <bpmn:incoming>Flow_0suvnw5</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zt6uou</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0zt6uou" sourceRef="Calculate_Quality_Indicator" targetRef="Calculate_Automated_Metadata" />
+    <bpmn:sequenceFlow id="Flow_1yb1ytv" sourceRef="Calculate_Automated_Metadata" targetRef="Enforce_IPR_Scheme" />
+    <bpmn:serviceTask id="Calculate_Automated_Metadata" name="Generate Automated Metadata">
+      <bpmn:incoming>Flow_0zt6uou</bpmn:incoming>
+      <bpmn:outgoing>Flow_1yb1ytv</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Enforce_IPR_Scheme" name="Enforce IPR Scheme">
+      <bpmn:incoming>Flow_1yb1ytv</bpmn:incoming>
+      <bpmn:outgoing>Flow_0afw8tu</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0afw8tu" sourceRef="Enforce_IPR_Scheme" targetRef="Review_Asset_Information" />
+    <bpmn:userTask id="Review_Asset_Information" name="Review Asset Information">
+      <bpmn:incoming>Flow_0afw8tu</bpmn:incoming>
+      <bpmn:outgoing>Flow_01zc326</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Asset_Accepted" name="Asset Accepted?">
+      <bpmn:incoming>Flow_01zc326</bpmn:incoming>
+      <bpmn:outgoing>Flow_1dfu726</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0bxbgy4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_01zc326" sourceRef="Review_Asset_Information" targetRef="Asset_Accepted" />
+    <bpmn:task id="Send_Status_Email_Acceptance" name="Send Status Email / Acceptance">
+      <bpmn:incoming>Flow_1dfu726</bpmn:incoming>
+      <bpmn:outgoing>Flow_1q2m49m</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1dfu726" name="Yes" sourceRef="Asset_Accepted" targetRef="Send_Status_Email_Acceptance" />
+    <bpmn:task id="Send_Status_Email_Rejection" name="Send Status Email / Rejection">
+      <bpmn:incoming>Flow_0bxbgy4</bpmn:incoming>
+      <bpmn:outgoing>Flow_0cmziy2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0bxbgy4" name="No" sourceRef="Asset_Accepted" targetRef="Send_Status_Email_Rejection" />
+    <bpmn:sequenceFlow id="Flow_0cmziy2" sourceRef="Send_Status_Email_Rejection" targetRef="Asset_Rejected_By_Helpdesk" />
+    <bpmn:endEvent id="Asset_Rejected_By_Helpdesk" name="Asset Rejected By Helpdesk">
+      <bpmn:incoming>Flow_0cmziy2</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_0lula2d" />
+    </bpmn:endEvent>
+    <bpmn:intermediateCatchEvent id="Reviwed_By_Publisher" name="Reviwed By Publisher">
+      <bpmn:incoming>Flow_1q2m49m</bpmn:incoming>
+      <bpmn:outgoing>Flow_1h7cndd</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0mayvnh" messageRef="Message_158jbzf" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_1q2m49m" sourceRef="Send_Status_Email_Acceptance" targetRef="Reviwed_By_Publisher" />
+    <bpmn:exclusiveGateway id="Is_Asset_OK" name="Is Asset OK?">
+      <bpmn:incoming>Flow_1h7cndd</bpmn:incoming>
+      <bpmn:outgoing>Flow_1nnniu2</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0wdxm21</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1h7cndd" sourceRef="Reviwed_By_Publisher" targetRef="Is_Asset_OK" />
+    <bpmn:exclusiveGateway id="Set_Embargo" name="Set Embargo?">
+      <bpmn:incoming>Flow_1nnniu2</bpmn:incoming>
+      <bpmn:outgoing>Flow_1uj85vv</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0fohmg5</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1nnniu2" name="Yes" sourceRef="Is_Asset_OK" targetRef="Set_Embargo" />
+    <bpmn:sequenceFlow id="Flow_1uj85vv" name="No" sourceRef="Set_Embargo" targetRef="Publish_Asset" />
+    <bpmn:serviceTask id="Publish_Asset" name="Publish Asset">
+      <bpmn:incoming>Flow_1uj85vv</bpmn:incoming>
+      <bpmn:incoming>Flow_086rvm0</bpmn:incoming>
+      <bpmn:outgoing>Flow_09fzixt</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Asset_Published" name="Asset Published">
+      <bpmn:incoming>Flow_09fzixt</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_09fzixt" sourceRef="Publish_Asset" targetRef="Asset_Published" />
+    <bpmn:sequenceFlow id="Flow_0fohmg5" name="Yes" sourceRef="Set_Embargo" targetRef="Gateway_Based_Event" />
+    <bpmn:eventBasedGateway id="Gateway_Based_Event">
+      <bpmn:incoming>Flow_0fohmg5</bpmn:incoming>
+      <bpmn:outgoing>Flow_00n9c13</bpmn:outgoing>
+      <bpmn:outgoing>Flow_18rzwcv</bpmn:outgoing>
+    </bpmn:eventBasedGateway>
+    <bpmn:intermediateCatchEvent id="Event_1cxuus3" name="Wait XX Days">
+      <bpmn:incoming>Flow_00n9c13</bpmn:incoming>
+      <bpmn:outgoing>Flow_086rvm0</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0vubms4" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_00n9c13" sourceRef="Gateway_Based_Event" targetRef="Event_1cxuus3" />
+    <bpmn:sequenceFlow id="Flow_086rvm0" sourceRef="Event_1cxuus3" targetRef="Publish_Asset" />
+    <bpmn:intermediateCatchEvent id="Publishing_Cancelled" name="Publishing Cancelled">
+      <bpmn:incoming>Flow_18rzwcv</bpmn:incoming>
+      <bpmn:outgoing>Flow_1v2rtbm</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1jnxrnq" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_18rzwcv" sourceRef="Gateway_Based_Event" targetRef="Publishing_Cancelled" />
+    <bpmn:sequenceFlow id="Flow_1v2rtbm" sourceRef="Publishing_Cancelled" targetRef="Set_Asset_As_Draft_Status" />
+    <bpmn:endEvent id="Asset_Publishing_Cancelled_By_Publisher" name="Asset Publishing Cancelled by Publisher">
+      <bpmn:incoming>Flow_1powa76</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_0s2gau4" />
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Asset_Rejected_By_Publisher" name="Asset Rejected By Publisher">
+      <bpmn:incoming>Flow_0wdxm21</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_0xgahb5" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0wdxm21" name="No" sourceRef="Is_Asset_OK" targetRef="Asset_Rejected_By_Publisher" />
+    <bpmn:sequenceFlow id="Flow_1powa76" sourceRef="Set_Asset_As_Draft_Status" targetRef="Asset_Publishing_Cancelled_By_Publisher" />
+    <bpmn:serviceTask id="Set_Asset_As_Draft_Status" name="Set Asset As Draft Status">
+      <bpmn:incoming>Flow_1v2rtbm</bpmn:incoming>
+      <bpmn:outgoing>Flow_1powa76</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmn:message id="Message_17xzavy" name="Message_Shortcut_Is_Clicked_By_Publisher" />
+  <bpmn:message id="Message_158jbzf" name="Reviwed_By_Publisher" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1snpl18">
+      <bpmndi:BPMNEdge id="Flow_01zc326_di" bpmnElement="Flow_01zc326">
+        <di:waypoint x="870" y="237" />
+        <di:waypoint x="935" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0afw8tu_di" bpmnElement="Flow_0afw8tu">
+        <di:waypoint x="690" y="237" />
+        <di:waypoint x="770" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yb1ytv_di" bpmnElement="Flow_1yb1ytv">
+        <di:waypoint x="520" y="237" />
+        <di:waypoint x="590" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zt6uou_di" bpmnElement="Flow_0zt6uou">
+        <di:waypoint x="350" y="237" />
+        <di:waypoint x="420" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0suvnw5_di" bpmnElement="Flow_0suvnw5">
+        <di:waypoint x="188" y="237" />
+        <di:waypoint x="250" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dfu726_di" bpmnElement="Flow_1dfu726">
+        <di:waypoint x="960" y="212" />
+        <di:waypoint x="960" y="120" />
+        <di:waypoint x="1060" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="967" y="173" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bxbgy4_di" bpmnElement="Flow_0bxbgy4">
+        <di:waypoint x="960" y="262" />
+        <di:waypoint x="960" y="350" />
+        <di:waypoint x="1060" y="350" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="968" y="283" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cmziy2_di" bpmnElement="Flow_0cmziy2">
+        <di:waypoint x="1160" y="350" />
+        <di:waypoint x="1242" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1q2m49m_di" bpmnElement="Flow_1q2m49m">
+        <di:waypoint x="1160" y="120" />
+        <di:waypoint x="1242" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1h7cndd_di" bpmnElement="Flow_1h7cndd">
+        <di:waypoint x="1278" y="120" />
+        <di:waypoint x="1365" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wdxm21_di" bpmnElement="Flow_0wdxm21">
+        <di:waypoint x="1390" y="145" />
+        <di:waypoint x="1390" y="332" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1398" y="236" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nnniu2_di" bpmnElement="Flow_1nnniu2">
+        <di:waypoint x="1415" y="120" />
+        <di:waypoint x="1505" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1451" y="102" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1uj85vv_di" bpmnElement="Flow_1uj85vv">
+        <di:waypoint x="1555" y="120" />
+        <di:waypoint x="1650" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1595" y="102" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09fzixt_di" bpmnElement="Flow_09fzixt">
+        <di:waypoint x="1750" y="120" />
+        <di:waypoint x="1852" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fohmg5_di" bpmnElement="Flow_0fohmg5">
+        <di:waypoint x="1530" y="145" />
+        <di:waypoint x="1530" y="225" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1536" y="182" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00n9c13_di" bpmnElement="Flow_00n9c13">
+        <di:waypoint x="1555" y="250" />
+        <di:waypoint x="1612" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_086rvm0_di" bpmnElement="Flow_086rvm0">
+        <di:waypoint x="1648" y="250" />
+        <di:waypoint x="1700" y="250" />
+        <di:waypoint x="1700" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18rzwcv_di" bpmnElement="Flow_18rzwcv">
+        <di:waypoint x="1530" y="275" />
+        <di:waypoint x="1530" y="332" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1v2rtbm_di" bpmnElement="Flow_1v2rtbm">
+        <di:waypoint x="1548" y="350" />
+        <di:waypoint x="1650" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1powa76_di" bpmnElement="Flow_1powa76">
+        <di:waypoint x="1750" y="350" />
+        <di:waypoint x="1852" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Gateway_1o5f3vy_di" bpmnElement="Asset_Accepted" isMarkerVisible="true">
+        <dc:Bounds x="935" y="212" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="995" y="230" width="83" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_027kqj6_di" bpmnElement="Send_Status_Email_Rejection">
+        <dc:Bounds x="1060" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0546atl_di" bpmnElement="Asset_Rejected_By_Helpdesk">
+        <dc:Bounds x="1242" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1224" y="375" width="74" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0cm2fyc_di" bpmnElement="Reviwed_By_Publisher">
+        <dc:Bounds x="1242" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1232" y="145" width="59" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0uf37iw_di" bpmnElement="Send_Status_Email_Acceptance">
+        <dc:Bounds x="1060" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0zp0f6i_di" bpmnElement="Is_Asset_OK" isMarkerVisible="true">
+        <dc:Bounds x="1365" y="95" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1357" y="71" width="65" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_19k2p7j_di" bpmnElement="Asset_Rejected_By_Publisher">
+        <dc:Bounds x="1372" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1347" y="375" width="90" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0csbqs2_di" bpmnElement="Set_Embargo" isMarkerVisible="true">
+        <dc:Bounds x="1505" y="95" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1494" y="71" width="71" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_01qs6zr_di" bpmnElement="Publish_Asset">
+        <dc:Bounds x="1650" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0w8t896_di" bpmnElement="Asset_Published">
+        <dc:Bounds x="1852" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1832" y="145" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1xujt1c_di" bpmnElement="Gateway_Based_Event">
+        <dc:Bounds x="1505" y="225" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1cxuus3_di" bpmnElement="Event_1cxuus3">
+        <dc:Bounds x="1612" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1596" y="275" width="68" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0nskjob_di" bpmnElement="Publishing_Cancelled">
+        <dc:Bounds x="1512" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1505" y="375" width="51" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1f7clzs_di" bpmnElement="Review_Asset_Information">
+        <dc:Bounds x="770" y="197" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1tsv4km_di" bpmnElement="Enforce_IPR_Scheme">
+        <dc:Bounds x="590" y="197" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0yw7u12_di" bpmnElement="Calculate_Automated_Metadata">
+        <dc:Bounds x="420" y="197" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ui1qmq_di" bpmnElement="Calculate_Quality_Indicator">
+        <dc:Bounds x="250" y="197" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="219" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1tfcnbf_di" bpmnElement="Asset_Publishing_Cancelled_By_Publisher">
+        <dc:Bounds x="1852" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1830" y="375" width="81" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1nxwoe3_di" bpmnElement="Set_Asset_As_Draft_Status">
+        <dc:Bounds x="1650" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

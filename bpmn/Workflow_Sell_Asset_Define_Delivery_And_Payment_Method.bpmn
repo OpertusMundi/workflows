@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_0qz5cfm" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.2.0">
+  <bpmn:process id="Process_0hjxmw9" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_0kfe7g8</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="Delivery_Method" name="Delivery Method?">
+      <bpmn:incoming>Flow_0kfe7g8</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ug5dqm</bpmn:outgoing>
+      <bpmn:outgoing>Flow_19nek01</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0qc6lvy</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0m3av99</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0kfe7g8" sourceRef="StartEvent_1" targetRef="Delivery_Method" />
+    <bpmn:sequenceFlow id="Flow_0ug5dqm" name="Draft Status" sourceRef="Delivery_Method" targetRef="Set_Asset_As_Draft_Status" />
+    <bpmn:endEvent id="Event_09yaknq" name="Draft Status">
+      <bpmn:incoming>Flow_0q7k3pv</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_1aueznl" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_19nek01" name="Own Means" sourceRef="Delivery_Method" targetRef="Asset_Received_By_Helpdesk" />
+    <bpmn:serviceTask id="Set_Asset_As_Draft_Status" name="Set Asset As Draft Status">
+      <bpmn:incoming>Flow_0ug5dqm</bpmn:incoming>
+      <bpmn:incoming>Flow_1ryci01</bpmn:incoming>
+      <bpmn:outgoing>Flow_0q7k3pv</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0qc6lvy" name="Link To Asset" sourceRef="Delivery_Method" targetRef="Upload_Asset_Web_Ftp_And_Cloud_Storage_Method" />
+    <bpmn:sequenceFlow id="Flow_0m3av99" name="Direct Upload" sourceRef="Delivery_Method" targetRef="Upload_Asset_Direct_Method" />
+    <bpmn:exclusiveGateway id="Gateway_1opnh60">
+      <bpmn:incoming>Flow_0i7i7fw</bpmn:incoming>
+      <bpmn:incoming>Flow_1hpf0p5</bpmn:incoming>
+      <bpmn:incoming>Flow_0fui6ri</bpmn:incoming>
+      <bpmn:outgoing>Flow_0i3vf0v</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0i7i7fw" sourceRef="Upload_Asset_Direct_Method" targetRef="Gateway_1opnh60" />
+    <bpmn:sequenceFlow id="Flow_1hpf0p5" sourceRef="Upload_Asset_Web_Ftp_And_Cloud_Storage_Method" targetRef="Gateway_1opnh60" />
+    <bpmn:sequenceFlow id="Flow_0fui6ri" sourceRef="Upload_Asset_Publishers_Own_Means_Method" targetRef="Gateway_1opnh60" />
+    <bpmn:sequenceFlow id="Flow_1rnkv71" sourceRef="Asset_Received_By_Helpdesk" targetRef="Upload_Asset_Publishers_Own_Means_Method" />
+    <bpmn:userTask id="Asset_Received_By_Helpdesk" name="Asset Received By Helpdesk">
+      <bpmn:incoming>Flow_19nek01</bpmn:incoming>
+      <bpmn:outgoing>Flow_1rnkv71</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Payment_Method" name="Payment Method?">
+      <bpmn:incoming>Flow_0i3vf0v</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ryci01</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1yae8n0</bpmn:outgoing>
+      <bpmn:outgoing>Flow_10yhy5k</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0i3vf0v" sourceRef="Gateway_1opnh60" targetRef="Payment_Method" />
+    <bpmn:sequenceFlow id="Flow_1ryci01" name="Draft Status" sourceRef="Payment_Method" targetRef="Set_Asset_As_Draft_Status" />
+    <bpmn:sequenceFlow id="Flow_0q7k3pv" sourceRef="Set_Asset_As_Draft_Status" targetRef="Event_09yaknq" />
+    <bpmn:sequenceFlow id="Flow_1yae8n0" name="Escrow" sourceRef="Payment_Method" targetRef="Set_Escrow_Payment" />
+    <bpmn:sequenceFlow id="Flow_10yhy5k" name="External Means" sourceRef="Payment_Method" targetRef="Set_External_Payment" />
+    <bpmn:serviceTask id="Set_External_Payment" name="Set External Payment">
+      <bpmn:incoming>Flow_10yhy5k</bpmn:incoming>
+      <bpmn:outgoing>Flow_155y4sb</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_155y4sb" sourceRef="Set_External_Payment" targetRef="Send_Email_Inform_Seller" />
+    <bpmn:serviceTask id="Send_Email_Inform_Seller" name="Send Email / Inform Seller">
+      <bpmn:incoming>Flow_155y4sb</bpmn:incoming>
+      <bpmn:outgoing>Flow_0wozl63</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Set_Escrow_Payment" name="Set Escrow Payment">
+      <bpmn:incoming>Flow_1yae8n0</bpmn:incoming>
+      <bpmn:outgoing>Flow_02i5jpp</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_18fv1fn">
+      <bpmn:incoming>Flow_0wozl63</bpmn:incoming>
+      <bpmn:incoming>Flow_02i5jpp</bpmn:incoming>
+      <bpmn:outgoing>Flow_1i7cjcc</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0wozl63" sourceRef="Send_Email_Inform_Seller" targetRef="Gateway_18fv1fn" />
+    <bpmn:sequenceFlow id="Flow_02i5jpp" sourceRef="Set_Escrow_Payment" targetRef="Gateway_18fv1fn" />
+    <bpmn:task id="Submit_To_Helpdesk" name="Submit To Helpdesk">
+      <bpmn:incoming>Flow_1i7cjcc</bpmn:incoming>
+      <bpmn:outgoing>Flow_0w925qr</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1i7cjcc" sourceRef="Gateway_18fv1fn" targetRef="Submit_To_Helpdesk" />
+    <bpmn:endEvent id="Information_Submitted" name="Information Submitted">
+      <bpmn:incoming>Flow_0w925qr</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0w925qr" sourceRef="Submit_To_Helpdesk" targetRef="Information_Submitted" />
+    <bpmn:serviceTask id="Upload_Asset_Web_Ftp_And_Cloud_Storage_Method" name="Upload Asset / Web-Ftp and Cloud-Storage Method">
+      <bpmn:incoming>Flow_0qc6lvy</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hpf0p5</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Upload_Asset_Direct_Method" name="Upload Asset / Direct Method">
+      <bpmn:incoming>Flow_0m3av99</bpmn:incoming>
+      <bpmn:outgoing>Flow_0i7i7fw</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Upload_Asset_Publishers_Own_Means_Method" name="Upload Asset / Publisher&#39;s Own Means Method">
+      <bpmn:incoming>Flow_1rnkv71</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fui6ri</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0hjxmw9">
+      <bpmndi:BPMNEdge id="Flow_0w925qr_di" bpmnElement="Flow_0w925qr">
+        <di:waypoint x="1570" y="237" />
+        <di:waypoint x="1652" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1i7cjcc_di" bpmnElement="Flow_1i7cjcc">
+        <di:waypoint x="1395" y="237" />
+        <di:waypoint x="1470" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02i5jpp_di" bpmnElement="Flow_02i5jpp">
+        <di:waypoint x="1190" y="120" />
+        <di:waypoint x="1370" y="120" />
+        <di:waypoint x="1370" y="212" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wozl63_di" bpmnElement="Flow_0wozl63">
+        <di:waypoint x="1270" y="350" />
+        <di:waypoint x="1370" y="350" />
+        <di:waypoint x="1370" y="262" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_155y4sb_di" bpmnElement="Flow_155y4sb">
+        <di:waypoint x="1120" y="350" />
+        <di:waypoint x="1170" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10yhy5k_di" bpmnElement="Flow_10yhy5k">
+        <di:waypoint x="890" y="262" />
+        <di:waypoint x="890" y="350" />
+        <di:waypoint x="1020" y="350" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="917" y="332" width="77" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yae8n0_di" bpmnElement="Flow_1yae8n0">
+        <di:waypoint x="890" y="212" />
+        <di:waypoint x="890" y="120" />
+        <di:waypoint x="1090" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="972" y="103" width="37" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0q7k3pv_di" bpmnElement="Flow_0q7k3pv">
+        <di:waypoint x="940" y="500" />
+        <di:waypoint x="1652" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ryci01_di" bpmnElement="Flow_1ryci01">
+        <di:waypoint x="890" y="262" />
+        <di:waypoint x="890" y="460" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="861" y="401" width="59" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0i3vf0v_di" bpmnElement="Flow_0i3vf0v">
+        <di:waypoint x="785" y="237" />
+        <di:waypoint x="865" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rnkv71_di" bpmnElement="Flow_1rnkv71">
+        <di:waypoint x="510" y="350" />
+        <di:waypoint x="560" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fui6ri_di" bpmnElement="Flow_0fui6ri">
+        <di:waypoint x="660" y="350" />
+        <di:waypoint x="760" y="350" />
+        <di:waypoint x="760" y="262" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hpf0p5_di" bpmnElement="Flow_1hpf0p5">
+        <di:waypoint x="580" y="120" />
+        <di:waypoint x="760" y="120" />
+        <di:waypoint x="760" y="212" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0i7i7fw_di" bpmnElement="Flow_0i7i7fw">
+        <di:waypoint x="580" y="237" />
+        <di:waypoint x="735" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0m3av99_di" bpmnElement="Flow_0m3av99">
+        <di:waypoint x="315" y="237" />
+        <di:waypoint x="480" y="237" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="326" y="219" width="67" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qc6lvy_di" bpmnElement="Flow_0qc6lvy">
+        <di:waypoint x="290" y="212" />
+        <di:waypoint x="290" y="120" />
+        <di:waypoint x="480" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="327" y="103" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19nek01_di" bpmnElement="Flow_19nek01">
+        <di:waypoint x="290" y="262" />
+        <di:waypoint x="290" y="350" />
+        <di:waypoint x="410" y="350" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="320" y="332" width="59" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ug5dqm_di" bpmnElement="Flow_0ug5dqm">
+        <di:waypoint x="290" y="262" />
+        <di:waypoint x="290" y="500" />
+        <di:waypoint x="840" y="500" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="511" y="509" width="59" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kfe7g8_di" bpmnElement="Flow_0kfe7g8">
+        <di:waypoint x="158" y="237" />
+        <di:waypoint x="265" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="122" y="219" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1g0oe8v_di" bpmnElement="Delivery_Method" isMarkerVisible="true">
+        <dc:Bounds x="265" y="212" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="273" width="86" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0mi7qjp_di" bpmnElement="Event_09yaknq">
+        <dc:Bounds x="1652" y="482" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1641" y="452" width="59" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1u119bl_di" bpmnElement="Set_Asset_As_Draft_Status">
+        <dc:Bounds x="840" y="460" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1opnh60_di" bpmnElement="Gateway_1opnh60" isMarkerVisible="true">
+        <dc:Bounds x="735" y="212" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_156r3h0_di" bpmnElement="Asset_Received_By_Helpdesk" bioc:stroke="black" bioc:fill="white">
+        <dc:Bounds x="410" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_15cfa3x_di" bpmnElement="Payment_Method" isMarkerVisible="true">
+        <dc:Bounds x="865" y="212" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="845" y="273" width="90" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_18vy64v_di" bpmnElement="Set_External_Payment">
+        <dc:Bounds x="1020" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0dwg9ra_di" bpmnElement="Send_Email_Inform_Seller">
+        <dc:Bounds x="1170" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0re4emo_di" bpmnElement="Set_Escrow_Payment">
+        <dc:Bounds x="1090" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_18fv1fn_di" bpmnElement="Gateway_18fv1fn" isMarkerVisible="true">
+        <dc:Bounds x="1345" y="212" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1pazp8y_di" bpmnElement="Submit_To_Helpdesk">
+        <dc:Bounds x="1470" y="197" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1tc097d_di" bpmnElement="Information_Submitted">
+        <dc:Bounds x="1652" y="219" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1642" y="262" width="56" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_028gehk_di" bpmnElement="Upload_Asset_Web_Ftp_And_Cloud_Storage_Method">
+        <dc:Bounds x="480" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0w5wsv0_di" bpmnElement="Upload_Asset_Direct_Method">
+        <dc:Bounds x="480" y="197" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0j6yxcg_di" bpmnElement="Upload_Asset_Publishers_Own_Means_Method">
+        <dc:Bounds x="560" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

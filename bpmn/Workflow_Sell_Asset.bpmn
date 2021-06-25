@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1158yu6" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.2.0">
+  <bpmn:process id="Process_1vhnpl6" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_1998iel</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1998iel" sourceRef="StartEvent_1" targetRef="Activity_10i2fa1" />
+    <bpmn:sequenceFlow id="Flow_04zmh5s" sourceRef="Activity_10i2fa1" targetRef="Activity_1k3ph12" />
+    <bpmn:sequenceFlow id="Flow_0261njp" sourceRef="Activity_1k3ph12" targetRef="Activity_1ryf5rt" />
+    <bpmn:endEvent id="Event_12ez1tu">
+      <bpmn:incoming>Flow_1ihq5dt</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1ihq5dt" sourceRef="Activity_1ryf5rt" targetRef="Event_12ez1tu" />
+    <bpmn:callActivity id="Activity_10i2fa1" name="Prepare Asset">
+      <bpmn:incoming>Flow_1998iel</bpmn:incoming>
+      <bpmn:outgoing>Flow_04zmh5s</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="Activity_1k3ph12" name="Define Delivery And Payment Method">
+      <bpmn:incoming>Flow_04zmh5s</bpmn:incoming>
+      <bpmn:outgoing>Flow_0261njp</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="Activity_1ryf5rt" name="Publish Asset" calledElement="">
+      <bpmn:incoming>Flow_0261njp</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ihq5dt</bpmn:outgoing>
+    </bpmn:callActivity>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1vhnpl6">
+      <bpmndi:BPMNEdge id="Flow_1998iel_di" bpmnElement="Flow_1998iel">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="260" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04zmh5s_di" bpmnElement="Flow_04zmh5s">
+        <di:waypoint x="360" y="117" />
+        <di:waypoint x="410" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0261njp_di" bpmnElement="Flow_0261njp">
+        <di:waypoint x="510" y="117" />
+        <di:waypoint x="560" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ihq5dt_di" bpmnElement="Flow_1ihq5dt">
+        <di:waypoint x="660" y="117" />
+        <di:waypoint x="712" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_12ez1tu_di" bpmnElement="Event_12ez1tu">
+        <dc:Bounds x="712" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0fzezey_di" bpmnElement="Activity_10i2fa1">
+        <dc:Bounds x="260" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0btd1pj_di" bpmnElement="Activity_1k3ph12">
+        <dc:Bounds x="410" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1hgnm0n_di" bpmnElement="Activity_1ryf5rt">
+        <dc:Bounds x="560" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

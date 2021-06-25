@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0nss2em" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.2.0">
+  <bpmn:process id="Process_0tm3qy9" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_0q594qm</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0q594qm" sourceRef="StartEvent_1" targetRef="Create_Account" />
+    <bpmn:sequenceFlow id="Flow_1qvgow4" sourceRef="Create_Account" targetRef="Email_User_Activation_Link" />
+    <bpmn:serviceTask id="Create_Account" name="Create Account">
+      <bpmn:incoming>Flow_0q594qm</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qvgow4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Email_User_Activation_Link" name="Email User / Activation Link">
+      <bpmn:incoming>Flow_1qvgow4</bpmn:incoming>
+      <bpmn:outgoing>Flow_1etyoy9</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1etyoy9" sourceRef="Email_User_Activation_Link" targetRef="Gateway_0xpnfvp" />
+    <bpmn:eventBasedGateway id="Gateway_0xpnfvp">
+      <bpmn:incoming>Flow_1etyoy9</bpmn:incoming>
+      <bpmn:outgoing>Flow_0s39q0n</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1mnrda4</bpmn:outgoing>
+    </bpmn:eventBasedGateway>
+    <bpmn:intermediateCatchEvent id="Wait_XX_Hours" name="Wait XX Hours">
+      <bpmn:incoming>Flow_0s39q0n</bpmn:incoming>
+      <bpmn:outgoing>Flow_14gf1wg</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1s7fe6y" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_0s39q0n" sourceRef="Gateway_0xpnfvp" targetRef="Wait_XX_Hours" />
+    <bpmn:intermediateCatchEvent id="Account_Activated_By_User" name="Account_Activated_By_User">
+      <bpmn:incoming>Flow_1mnrda4</bpmn:incoming>
+      <bpmn:outgoing>Flow_0xo42h2</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_104gu6o" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_1mnrda4" sourceRef="Gateway_0xpnfvp" targetRef="Account_Activated_By_User" />
+    <bpmn:sequenceFlow id="Flow_14gf1wg" sourceRef="Wait_XX_Hours" targetRef="Cancel_Registration" />
+    <bpmn:serviceTask id="Cancel_Registration" name="Cancel Registration">
+      <bpmn:incoming>Flow_14gf1wg</bpmn:incoming>
+      <bpmn:outgoing>Flow_19dqw8l</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0xo42h2" sourceRef="Account_Activated_By_User" targetRef="Activate_Account" />
+    <bpmn:serviceTask id="Activate_Account" name="Activate Account">
+      <bpmn:incoming>Flow_0xo42h2</bpmn:incoming>
+      <bpmn:outgoing>Flow_0q0ilfy</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0q0ilfy" sourceRef="Activate_Account" targetRef="Email_User_Registration_Completed" />
+    <bpmn:sequenceFlow id="Flow_19dqw8l" sourceRef="Cancel_Registration" targetRef="Email_User_Registration_Cancelled" />
+    <bpmn:serviceTask id="Email_User_Registration_Completed" name="Email User / Registration Completed">
+      <bpmn:incoming>Flow_0q0ilfy</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jzorr1</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Email_User_Registration_Cancelled" name="Email User / Registration Cancelled">
+      <bpmn:incoming>Flow_19dqw8l</bpmn:incoming>
+      <bpmn:outgoing>Flow_14z0ial</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Registration_Completed" name="Registration Completed">
+      <bpmn:incoming>Flow_1jzorr1</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1jzorr1" sourceRef="Email_User_Registration_Completed" targetRef="Registration_Completed" />
+    <bpmn:sequenceFlow id="Flow_14z0ial" sourceRef="Email_User_Registration_Cancelled" targetRef="Registration_Cancelled" />
+    <bpmn:endEvent id="Registration_Cancelled" name="Registration Cancelled">
+      <bpmn:incoming>Flow_14z0ial</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_0nzr4oj" />
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0tm3qy9">
+      <bpmndi:BPMNEdge id="Flow_0q594qm_di" bpmnElement="Flow_0q594qm">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="270" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qvgow4_di" bpmnElement="Flow_1qvgow4">
+        <di:waypoint x="370" y="117" />
+        <di:waypoint x="430" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1etyoy9_di" bpmnElement="Flow_1etyoy9">
+        <di:waypoint x="530" y="117" />
+        <di:waypoint x="595" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0s39q0n_di" bpmnElement="Flow_0s39q0n">
+        <di:waypoint x="620" y="142" />
+        <di:waypoint x="620" y="250" />
+        <di:waypoint x="712" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mnrda4_di" bpmnElement="Flow_1mnrda4">
+        <di:waypoint x="645" y="117" />
+        <di:waypoint x="712" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14gf1wg_di" bpmnElement="Flow_14gf1wg">
+        <di:waypoint x="748" y="250" />
+        <di:waypoint x="820" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xo42h2_di" bpmnElement="Flow_0xo42h2">
+        <di:waypoint x="748" y="117" />
+        <di:waypoint x="820" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0q0ilfy_di" bpmnElement="Flow_0q0ilfy">
+        <di:waypoint x="920" y="117" />
+        <di:waypoint x="1000" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19dqw8l_di" bpmnElement="Flow_19dqw8l">
+        <di:waypoint x="920" y="250" />
+        <di:waypoint x="1000" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jzorr1_di" bpmnElement="Flow_1jzorr1">
+        <di:waypoint x="1100" y="117" />
+        <di:waypoint x="1182" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14z0ial_di" bpmnElement="Flow_14z0ial">
+        <di:waypoint x="1100" y="250" />
+        <di:waypoint x="1182" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1r325br_di" bpmnElement="Create_Account">
+        <dc:Bounds x="270" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_026bhr1_di" bpmnElement="Email_User_Activation_Link">
+        <dc:Bounds x="430" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1072xse_di" bpmnElement="Gateway_0xpnfvp">
+        <dc:Bounds x="595" y="92" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0nl4krf_di" bpmnElement="Account_Activated_By_User">
+        <dc:Bounds x="712" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="691" y="142" width="79" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1otqikx_di" bpmnElement="Wait_XX_Hours">
+        <dc:Bounds x="712" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="694" y="275" width="72" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_02exlf9_di" bpmnElement="Cancel_Registration">
+        <dc:Bounds x="820" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0u6mpv4_di" bpmnElement="Activate_Account">
+        <dc:Bounds x="820" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0iwm3zr_di" bpmnElement="Email_User_Registration_Completed">
+        <dc:Bounds x="1000" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0rlxs3r_di" bpmnElement="Email_User_Registration_Cancelled">
+        <dc:Bounds x="1000" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1xnc88y_di" bpmnElement="Registration_Completed">
+        <dc:Bounds x="1182" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1171" y="142" width="59" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0997wt9_di" bpmnElement="Registration_Cancelled">
+        <dc:Bounds x="1182" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1171" y="275" width="59" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
